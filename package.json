@@ -1,7 +1,7 @@
 {
   "name": "indian-rail-mcp",
   "version": "0.1.0",
-  "description": "Indian Railways data from official sources (NTES + IRCTC) \u2014 typed library and MCP server. Train schedules, live running status, trains between stations, live station boards, PNR status and berth-level seat availability.",
+  "description": "Indian Railways data from official sources (NTES + IRCTC) — typed library and MCP server. Train schedules, live running status, trains between stations, live station boards, PNR status and berth-level seat availability.",
   "keywords": [
     "indian-railways",
     "irctc",
@@ -15,12 +15,22 @@
     "model-context-protocol"
   ],
   "license": "MIT",
+  "author": "mahi-v-v",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mahi-v-v/indian-rail-mcp.git"
+  },
+  "homepage": "https://github.com/mahi-v-v/indian-rail-mcp#readme",
+  "bugs": {
+    "url": "https://github.com/mahi-v-v/indian-rail-mcp/issues"
+  },
   "type": "module",
   "engines": {
     "node": ">=20"
   },
   "files": [
-    "dist"
+    "dist",
+    "src"
   ],
   "exports": {
     ".": {
@@ -37,6 +47,9 @@
       "import": "./dist/mcp/stdio.js"
     }
   },
+  "bin": {
+    "indian-rail-mcp": "./dist/mcp/stdio.js"
+  },
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
     "typecheck": "tsc --noEmit",
@@ -47,7 +60,8 @@
     "dev": "npm run build && node --experimental-strip-types dev-server.ts",
     "verify:vercel": "node test/verify-vercel-build.mjs",
     "start": "node dist/mcp/stdio.js",
-    "stdio": "npm run build && node dist/mcp/stdio.js"
+    "stdio": "npm run build && node dist/mcp/stdio.js",
+    "prepublishOnly": "npm run build && npm test"
   },
   "dependencies": {
     "cheerio": "^1.2.0"
@@ -69,8 +83,5 @@
     "@types/node": "^22.10.0",
     "typescript": "^5.7.0",
     "zod": "^4.4.3"
-  },
-  "bin": {
-    "indian-rail-mcp": "./dist/mcp/stdio.js"
   }
 }

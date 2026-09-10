@@ -48,7 +48,7 @@
     }
   },
   "bin": {
-    "indian-rail-mcp": "./dist/mcp/stdio.js"
+    "indian-rail-mcp": "dist/mcp/stdio.js"
   },
   "scripts": {
     "build": "tsc -p tsconfig.build.json",

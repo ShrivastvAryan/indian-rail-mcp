@@ -1,8 +1,14 @@
+import { createRequire } from "node:module";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { registerRailTools, type ToolOptions } from "./tools.ts";
 
 export const SERVER_NAME = "indian-rail";
-export const SERVER_VERSION = "0.1.0";
+
+// Read from the manifest rather than a literal: this file sits two levels below
+// the package root in both src/ and dist/, so the path holds either way. A
+// hardcoded version silently drifts from the published one on every release.
+const require = createRequire(import.meta.url);
+export const SERVER_VERSION: string = require("../../package.json").version;
 
 /**
  * Build an MCP server exposing the Indian Railways tools.

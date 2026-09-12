@@ -1,6 +1,6 @@
 {
   "name": "indian-rail-mcp",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Indian Railways data from official sources (NTES + IRCTC) — typed library and MCP server. Train schedules, live running status, trains between stations, live station boards, PNR status and berth-level seat availability.",
   "keywords": [
     "indian-railways",
@@ -64,24 +64,12 @@
     "prepublishOnly": "npm run build && npm test"
   },
   "dependencies": {
-    "cheerio": "^1.2.0"
-  },
-  "peerDependencies": {
-    "@modelcontextprotocol/sdk": ">=1.20.0",
-    "zod": "^4.0.0"
-  },
-  "peerDependenciesMeta": {
-    "@modelcontextprotocol/sdk": {
-      "optional": true
-    },
-    "zod": {
-      "optional": true
-    }
+    "@modelcontextprotocol/sdk": "^1.29.0",
+    "cheerio": "^1.2.0",
+    "zod": "^4.4.3"
   },
   "devDependencies": {
-    "@modelcontextprotocol/sdk": "^1.29.0",
     "@types/node": "^22.10.0",
-    "typescript": "^5.7.0",
-    "zod": "^4.4.3"
+    "typescript": "^5.7.0"
   }
 }

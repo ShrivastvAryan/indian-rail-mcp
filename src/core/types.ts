@@ -67,6 +67,12 @@ export interface TrainRunningStatus {
 	label: string;
 }
 
+/** Delay status derived from the latest station update, when available. */
+export interface LiveStatus {
+	delayMinutes: number | null;
+	label: string;
+}
+
 export interface CoachSlot {
 	position: number;
 	coach: string;
@@ -79,6 +85,7 @@ export interface TrainRunning {
 	journeyDate: string | null;
 	summary: string | null;
 	status: TrainRunningStatus | null;
+	liveStatus: LiveStatus;
 	availableInstances: JourneyInstance[];
 	stops: RunningStop[];
 	intermediateStations: IntermediateStation[];

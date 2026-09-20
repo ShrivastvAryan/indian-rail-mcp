@@ -61,6 +61,12 @@ export interface IntermediateStation {
 	type: "NON_STOPPING";
 }
 
+/** A concise delay status derived from NTES's live-running summary. */
+export interface TrainRunningStatus {
+	delayMinutes: number;
+	label: string;
+}
+
 export interface CoachSlot {
 	position: number;
 	coach: string;
@@ -72,6 +78,7 @@ export interface TrainRunning {
 	trainName: string | null;
 	journeyDate: string | null;
 	summary: string | null;
+	status: TrainRunningStatus | null;
 	availableInstances: JourneyInstance[];
 	stops: RunningStop[];
 	intermediateStations: IntermediateStation[];

@@ -11,7 +11,8 @@ import type {
 	RunningStop,
 	TrainBetweenStations,
 	TrainInfo,
-	TrainRunning
+	TrainRunning,
+	TrainRunningStatus
 } from "../types.ts";
 
 const clean = (s: string): string => s.replace(/\s+/g, " ").trim();
@@ -407,6 +408,28 @@ function parseNonStoppingStation(
 	};
 }
 
+/** Extract NTES's elapsed delay from the live-running summary. */
+function parseTrainRunningStatus(
+	summary: string | null
+): TrainRunningStatus | null {
+	if (!summary) return null;
+
+	const delayMatch = summary.match(/\(Delay:\s*(\d{1,2}):(\d{2})\)/i);
+	if (delayMatch) {
+		const hours = Number(delayMatch[1]);
+		const minutes = Number(delayMatch[2]);
+		const delayMinutes = hours * 60 + minutes;
+
+		return delayMinutes === 0
+			? { delayMinutes: 0, label: "On Time" }
+			: { delayMinutes, label: `+${delayMinutes} min delay` };
+	}
+
+	return /On Time/i.test(summary)
+		? { delayMinutes: 0, label: "On Time" }
+		: null;
+}
+
 export function parseRunningStatus(
 	html: string,
 	trainNumber: string,
@@ -453,6 +476,7 @@ export function parseRunningStatus(
 		clean(pane.find("h6").first().text()) ||
 		clean(pane.find("h5").first().text()) ||
 		null;
+	const status = parseTrainRunningStatus(summary);
 
 	// Halt cards nest, so the same stop can be reached more than once.
 	const stops: RunningStop[] = [];
@@ -484,6 +508,7 @@ export function parseRunningStatus(
 		trainName: clean($("h3").first().text().replace(/^\d{4,5}\s*/, "")) || null,
 		journeyDate,
 		summary,
+		status,
 		availableInstances,
 		stops,
 		intermediateStations,

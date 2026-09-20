@@ -154,6 +154,23 @@ test("parseRunningStatus separates non-stopping stations from halts", () => {
 	assert.deepEqual(run.stops, []);
 });
 
+test("parseRunningStatus exposes a concise delay status", () => {
+	const delayed = parseRunningStatus(
+		`<div id="train23-aug-2026"><h6>Arrived at NEW DELHI (NDLS) at 07:45 20-Sep (Delay: 01:05)</h6></div>`,
+		"12626"
+	);
+	assert.deepEqual(delayed.status, {
+		delayMinutes: 65,
+		label: "+65 min delay"
+	});
+
+	const onTime = parseRunningStatus(
+		`<div id="train23-aug-2026"><h6>Running On Time</h6></div>`,
+		"12626"
+	);
+	assert.deepEqual(onTime.status, { delayMinutes: 0, label: "On Time" });
+});
+
 test("no stop is ever built from coach-modal content", () => {
 	const run = parseRunningStatus(fixture("running-full.html"), "12626");
 	// ENG/LPR are coach labels; they must never appear as station codes.

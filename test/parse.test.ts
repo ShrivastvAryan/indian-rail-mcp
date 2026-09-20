@@ -134,6 +134,26 @@ test("parseRunningStatus reads halts, times, delay and coach position", () => {
 	assert.ok(run.coachPosition.some((c) => c.coach === "B1" && c.classCode === "3A"));
 });
 
+test("parseRunningStatus separates non-stopping stations from halts", () => {
+	const html = `
+		<h3>12626 KERALA EXPRESS</h3>
+		<div id="train23-aug-2026"><h6>Running</h6>
+			<div class="nonStopRow">Non-Stopping BIROHE - BEO 284 KMs</div>
+			<div class="nonStopRow">Non-Stopping BIROHE - BEO 284 KMs</div>
+		</div>`;
+	const run = parseRunningStatus(html, "12626");
+
+	assert.deepEqual(run.intermediateStations, [
+		{
+			stationName: "BIROHE",
+			stationCode: "BEO",
+			distanceKm: 284,
+			type: "NON_STOPPING"
+		}
+	]);
+	assert.deepEqual(run.stops, []);
+});
+
 test("no stop is ever built from coach-modal content", () => {
 	const run = parseRunningStatus(fixture("running-full.html"), "12626");
 	// ENG/LPR are coach labels; they must never appear as station codes.

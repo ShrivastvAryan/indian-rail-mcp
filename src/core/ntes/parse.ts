@@ -3,6 +3,7 @@ import type { CheerioAPI, Cheerio } from "cheerio";
 import type { Element } from "domhandler";
 import type {
 	CoachSlot,
+	IntermediateStation,
 	JourneyInstance,
 	LiveStationBoard,
 	LiveStationTrain,
@@ -380,6 +381,32 @@ function parseHaltCard($: CheerioAPI, el: Element): RunningStop | null {
 	};
 }
 
+/** A hidden NTES row for a station the train passes without stopping. */
+function parseNonStoppingStation(
+	$: CheerioAPI,
+	el: Element
+): IntermediateStation | null {
+	const text = clean($(el).text()).replace(/^Non-Stopping\s*/i, "");
+	if (!text) return null;
+
+	const match = text.match(
+		/([A-Z][A-Z\s.'()/-]*?)\s*-\s*([A-Z0-9]+)\s+(\d+)\s*KMs/i
+	);
+	if (!match) return null;
+
+	const stationName = match[1]?.trim();
+	const stationCode = match[2]?.trim().toUpperCase();
+	const distance = match[3];
+	if (!stationName || !stationCode || !distance) return null;
+
+	return {
+		stationName,
+		stationCode,
+		distanceKm: Number(distance),
+		type: "NON_STOPPING"
+	};
+}
+
 export function parseRunningStatus(
 	html: string,
 	trainNumber: string,
@@ -439,6 +466,19 @@ export function parseRunningStatus(
 		stops.push(stop);
 	});
 
+	const intermediateStations: IntermediateStation[] = [];
+	const seenIntermediateStations = new Set<string>();
+	pane.find(".nonStopRow").each((_, el) => {
+		const station = parseNonStoppingStation($, el as Element);
+		if (!station) return;
+
+		const key = `${station.stationCode}@${station.distanceKm}`;
+		if (seenIntermediateStations.has(key)) return;
+
+		seenIntermediateStations.add(key);
+		intermediateStations.push(station);
+	});
+
 	return {
 		trainNumber,
 		trainName: clean($("h3").first().text().replace(/^\d{4,5}\s*/, "")) || null,
@@ -446,6 +486,7 @@ export function parseRunningStatus(
 		summary,
 		availableInstances,
 		stops,
+		intermediateStations,
 		coachPosition: parseCoaches(pane, $)
 	};
 }

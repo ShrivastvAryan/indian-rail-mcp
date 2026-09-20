@@ -53,6 +53,14 @@ export interface RunningStop {
 	platform: string | null;
 }
 
+/** A station the train passes without a scheduled halt. */
+export interface IntermediateStation {
+	stationName: string;
+	stationCode: string;
+	distanceKm: number;
+	type: "NON_STOPPING";
+}
+
 export interface CoachSlot {
 	position: number;
 	coach: string;
@@ -66,6 +74,7 @@ export interface TrainRunning {
 	summary: string | null;
 	availableInstances: JourneyInstance[];
 	stops: RunningStop[];
+	intermediateStations: IntermediateStation[];
 	coachPosition: CoachSlot[];
 }
 
